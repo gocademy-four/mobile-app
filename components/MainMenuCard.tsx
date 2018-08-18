@@ -61,20 +61,14 @@ const styles = StyleSheet.create({
     textAlign: "justify",
     color: "#34495e"
   },
-  button: {
-    borderRadius: 3,
-    borderColor: "#34495e",
-    backgroundColor: "transparent",
-    ...(Platform.OS === "ios" ? { borderWidth: 1 } : {})
-  },
   buttonText: {
     color: "#34495e"
   },
   cardButton: {
-    borderWidth: 1,
     borderRadius: 3,
     borderColor: "#34495e",
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
+    ...(Platform.OS === "ios" ? { borderWidth: 1 } : {})
   },
   cardButtonContainer: {
     marginLeft: 0

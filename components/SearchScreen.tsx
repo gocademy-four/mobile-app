@@ -6,7 +6,7 @@ import {
   Platform,
   ActivityIndicator
 } from "react-native"
-import { Button } from "react-native-elements"
+import { Input, Button } from "react-native-elements"
 import { NavigationScreenProp } from "react-navigation"
 // @ts-ignore
 import { Picker } from "react-native-picker-dropdown"
@@ -16,7 +16,8 @@ interface Props {
 }
 
 interface State {
-  lesson: string
+  lesson: string,
+  date: string,
   lessonData: any[] | null
 }
 
@@ -25,7 +26,8 @@ export default class SearchScreen extends React.Component<Props, State> {
     super(props, context)
 
     this.state = {
-      lesson: "js",
+      lesson: "",
+      string: "",
       lessonData: null
     }
   }
@@ -78,8 +80,19 @@ export default class SearchScreen extends React.Component<Props, State> {
         ) : (
           <ActivityIndicator />
         )}
+
+        <Input
+          leftIcon={{ name: "date-range" }}
+          containerStyle={{marginBottom: 12, marginTop: 12}}
+          placeholder="Tanggal"
+          onChangeText={date => this.setState({ ...this.state, date })}
+        />
+
         <Button
-          onPress={() => this.props.navigation.navigate("SearchResult")}
+          onPress={() => this.props.navigation.navigate("SearchResult", {
+            date: this.state.date,
+            lesson: this.state.lesson,
+          })}
           title="Cari Tutor"
           icon={{ name: "search", color: "white" }}
           buttonStyle={{

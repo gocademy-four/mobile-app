@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Text, View, StyleSheet } from "react-native"
+import { Text, View, StyleSheet, ActivityIndicator } from "react-native"
 import { ListItem } from "react-native-elements"
 import { NavigationScreenProp } from "react-navigation"
 
@@ -7,37 +7,58 @@ interface Props {
   navigation: NavigationScreenProp<any>
 }
 
-const list = [
-  {
-    name: "Appointments",
-    location: "Tangerang",
-    lesson: "Kimia",
-    date: "27 Januari 2008",
-    telephone: "08569952260"
-  },
-  {
-    name: "Trips",
-    lesson: "Fisika",
-    location: "Jakarta Barat",
-    date: "27 Januari 2008"
-  }
-]
+interface State {
+  historyData: any[] | null
+}
 
-export default class HistoryScreen extends React.Component<Props> {
-  static navigationOptions = {
-    title: "History"
+export default class HistoryScreen extends React.Component<Props, State> {
+  constructor(props: Props, context?: any) {
+    super(props, context)
+
+    this.state = {
+      historyData: null
+    }
   }
+
+  static navigationOptions = {
+    title: "Pesanan"
+  }
+
+  private populateHistories = async () => {
+    const response = await fetch(
+      "https://gocademy-tutor-api-server.herokuapp.com/history",
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json"
+        }
+      }
+     )
+
+    if (response.status === 200) {
+      this.setState({ historyData: await response.json() })
+    } else {
+      console.warn("Unable to fetch classes")
+    }
+  }
+
+  componentDidMount() {
+    this.populateHistories()
+  }
+
+
   render() {
     return (
       <View style={styles.container}>
-        {list.map((item, i) => (
+      {this.state.historyData ? (
+        this.state.historyData.map((item, i) => (
           <ListItem
             key={i}
             title={item.name}
             titleStyle={styles.title}
             subtitle={
               "Pelajaran: " +
-              item.lesson +
+              item.teachedlesson +
               "\n" +
               item.location +
               ", " +
@@ -58,17 +79,20 @@ export default class HistoryScreen extends React.Component<Props> {
               })
             }}
           />
-        ))}
+          ))) : (
+          <ActivityIndicator />
+          )
+        }
       </View>
     )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#ecf0f1"
-  },
-  title: {
-    fontWeight: "bold"
-  }
-})
+    const styles = StyleSheet.create({
+      container: {
+        backgroundColor: "#ecf0f1"
+      },
+      title: {
+        fontWeight: "bold"
+      }
+    })

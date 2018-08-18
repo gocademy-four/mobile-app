@@ -80,13 +80,13 @@ export default class RegisterScreen extends React.Component<Props, State> {
         <Input
           containerStyle={styles.input}
           leftIcon={{ name: "lock" }}
+          secureTextEntry={true}
           placeholder="Password"
           onChangeText={password => this.setState({ ...this.state, password })}
         />
         <Input
           containerStyle={styles.input}
           leftIcon={{ name: "phone" }}
-          secureTextEntry={true}
           placeholder="Nomor telepon"
           onChangeText={phoneNumber =>
             this.setState({ ...this.state, phoneNumber })

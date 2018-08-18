@@ -10,9 +10,22 @@ interface Props {
 interface State {
   email: string
   password: string
+  loginInProcess: boolean
+  unableLogin: boolean
 }
 
 export default class LoginScreen extends React.Component<Props, State> {
+  constructor(props: Props, context?: any) {
+    super(props, context)
+
+    this.state = {
+      email: "",
+      password: "",
+      loginInProcess: false,
+      unableLogin: false,
+    }
+  }
+
   static navigationOptions = {
     title: "Login"
   }
@@ -22,6 +35,8 @@ export default class LoginScreen extends React.Component<Props, State> {
   }
 
   private loginPressed = async () => {
+    this.setState({ loginInProcess: true })
+    this.setState({ unableLogin: false })
     const response = await fetch(
       "https://gocademy-tutor-api-server.herokuapp.com/session/login",
       {
@@ -39,11 +54,12 @@ export default class LoginScreen extends React.Component<Props, State> {
 
     if (response.status === 200) {
       const { token } = JSON.parse(await response.text())
-
       await AsyncStorage.setItem("token", token)
       this.props.navigation.navigate("Initial")
     } else {
       console.warn("Unable to login")
+      this.setState({ loginInProcess: false})
+      this.setState({ unableLogin: true})
     }
   }
 
@@ -64,8 +80,12 @@ export default class LoginScreen extends React.Component<Props, State> {
           secureTextEntry={true}
           onChangeText={password => this.setState({ ...this.state, password })}
         />
-        <Button title="Masuk" onPress={this.loginPressed} />
-
+        { this.state.unableLogin && <Text style={styles.warning}>Email atau password Anda salah</Text>}
+        <Button
+          title="Masuk"
+          onPress={this.loginPressed}
+          disabled={this.state.loginInProcess}
+        />
         <Text style={{ marginTop: 20 }}>Belum punya akun?</Text>
         <Text style={{ color: "blue" }} onPress={this.registerPressed}>
           Daftar sekarang
@@ -91,5 +111,9 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 12
+  },
+  warning: {
+    marginVertical: 10,
+    color: 'red',
   }
 })

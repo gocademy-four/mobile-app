@@ -25,6 +25,31 @@ export default class SearchResultScreen extends React.Component<Props> {
     title: "Search Result"
   }
 
+  private orderPressed = async () => {
+    const response = await fetch(
+      "https://gocademy-tutor-api-server.herokuapp.com/orders",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          teachedlesson: this.state.teachedlesson
+        })
+      }
+    )
+
+    if (response.status === 200) {
+      const { token } = JSON.parse(await response.text())
+
+      await AsyncStorage.setItem("token", token)
+      this.props.navigation.navigate("Initial")
+    } else {
+      console.warn("Unable to login")
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -51,7 +76,7 @@ export default class SearchResultScreen extends React.Component<Props> {
                   },
                   {
                     text: "Ya",
-                    onPress: () => this.props.navigation.navigate("Home")
+                    onPress: () => this.orderPressed,
                   }
                 ],
                 { cancelable: false }
